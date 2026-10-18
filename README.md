@@ -169,9 +169,9 @@ Demo state is saved in your browser. Use **Reset demo data** in the top bar to s
 
 | | |
 |---|---|
-| **Team name** | _your team name_ |
-| **Institution** | _your institution_ |
-| **Members** | _names_ |
+| **Team name** | _Glide to Victory_ |
+| **Institution** | _Lendi Institute of Engineering and Technologoy_ |
+| **Members** | _Terikoti Harshitha, Padala Padmini_ |
 
 ---
 
