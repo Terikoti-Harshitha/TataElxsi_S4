@@ -1,0 +1,479 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>LabelGuard AI</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Schibsted+Grotesk:wght@600;700;800&display=swap">
+<style>
+/* Layout: dark left rail (Pitch group, Live demo group) + sticky top bar with Tour / Autopilot. Pitch pages are editorial; demo pages are dense tables. Boldness lives in the hero label specimen. */
+:root{
+--bg:#F1F4F6;--surface:#FFFFFF;--surface2:#F6F8F9;--fg:#12202B;--muted:#566774;--line:#DAE1E6;
+--nav:#0C2230;--nav-fg:#B6C7D2;--nav-h:#FFFFFF;
+--accent:#087A72;--accent-ink:#FFFFFF;--accent-soft:#D8F0EC;
+--good:#1B7A4B;--good-bg:#DCF2E5;--warn:#7D5200;--warn-bg:#FAEDC4;--crit:#B3261E;--crit-bg:#FBE0DD;--high:#A84B07;--high-bg:#FCE4CF;--info:#235A8C;--info-bg:#DEEAF6;
+--mark:#BDEFD9;--del:#F6CBC6;
+--f-display:'Schibsted Grotesk',system-ui,sans-serif;--f-body:'IBM Plex Sans',system-ui,sans-serif;--f-mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+--bg:#0A141B;--surface:#121F29;--surface2:#0F1A22;--fg:#E5EDF2;--muted:#8FA2AF;--line:#243542;
+--nav:#07101A;--nav-fg:#8EA3B2;--nav-h:#FFFFFF;
+--accent:#3CCABD;--accent-ink:#06201D;--accent-soft:#123A38;
+--good:#5CD08E;--good-bg:#12382A;--warn:#F0C766;--warn-bg:#3A2E10;--crit:#FF8E85;--crit-bg:#431B18;--high:#FFAB6B;--high-bg:#432512;--info:#82B8EA;--info-bg:#15293D;
+--mark:#1F5A47;--del:#69302B;color-scheme:dark}}
+:root[data-theme="dark"]{
+--bg:#0A141B;--surface:#121F29;--surface2:#0F1A22;--fg:#E5EDF2;--muted:#8FA2AF;--line:#243542;
+--nav:#07101A;--nav-fg:#8EA3B2;--nav-h:#FFFFFF;
+--accent:#3CCABD;--accent-ink:#06201D;--accent-soft:#123A38;
+--good:#5CD08E;--good-bg:#12382A;--warn:#F0C766;--warn-bg:#3A2E10;--crit:#FF8E85;--crit-bg:#431B18;--high:#FFAB6B;--high-bg:#432512;--info:#82B8EA;--info-bg:#15293D;
+--mark:#1F5A47;--del:#69302B;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.55 var(--f-body)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.015em}
+h1{font-size:clamp(28px,4.2vw,44px);line-height:1.07;font-weight:800}
+h2{font-size:24px;line-height:1.15;font-weight:700}
+h3{font-size:16px;font-weight:700}
+p{margin:0}
+a{color:var(--accent)}
+.eyebrow{font:500 11px var(--f-mono);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.lead{font-size:16px;max-width:62ch;color:var(--fg)}
+.sub{color:var(--muted);max-width:70ch}
+.note{font-size:12px;color:var(--muted)}
+.m{font-family:var(--f-mono);font-size:12.5px}
+#app{display:flex;min-height:100vh}
+nav.side{width:236px;flex:none;position:sticky;top:env(safe-area-inset-top,0px);align-self:flex-start;height:calc(100vh - env(safe-area-inset-top,0px));overflow:auto;background:var(--nav);color:var(--nav-fg);padding:20px 12px 20px max(16px,env(safe-area-inset-left,0px))}
+nav.side .brand{font:800 19px var(--f-display);color:var(--nav-h);letter-spacing:-.02em}
+nav.side .tag{font-size:11px;margin:2px 0 18px;line-height:1.4}
+nav.side .grp{font:500 10.5px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;margin:16px 0 6px;opacity:.7}
+.nl{display:block;width:100%;text-align:left;background:none;border:0;border-radius:6px;padding:7px 10px;color:inherit;cursor:pointer;white-space:nowrap}
+.nl:hover{background:rgba(255,255,255,.07)}
+.nl.on{background:var(--accent);color:var(--accent-ink);font-weight:600}
+main{flex:1;min-width:0}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding-block:9px;padding-left:28px;padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top .sp{flex:1}
+.pg{padding-block:26px 120px;padding-left:28px;padding-right:max(16px,env(safe-area-inset-right,0px));max-width:1260px;display:flex;flex-direction:column;gap:22px}
+.pg>*{min-width:0}
+body.tour-on .pg{padding-bottom:300px}
+.c{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px}
+.c.flat{background:transparent}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:16px}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.stack{display:flex;flex-direction:column;gap:10px}
+.k{font-size:12px;color:var(--muted)}
+.kpi b{display:block;font:700 26px var(--f-display);font-variant-numeric:tabular-nums}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+tr[data-a]{cursor:pointer}tr[data-a]:hover{background:var(--surface2)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.btn{background:var(--accent);color:var(--accent-ink);border:1px solid var(--accent);border-radius:6px;padding:8px 14px;font-weight:600;font-size:13px;cursor:pointer}
+.btn:hover{filter:brightness(1.07)}
+.btn.ghost{background:transparent;color:var(--fg);border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--accent);filter:none}
+.btn.danger{background:var(--crit);border-color:var(--crit);color:#fff}
+.btn.sm{padding:4px 10px;font-size:12px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input,select,textarea{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px;width:100%}
+input[type=checkbox]{width:auto}
+label.f{display:block;margin-bottom:10px;font-size:12px;color:var(--muted)}
+label.f>input,label.f>select,label.f>textarea{margin-top:3px;color:var(--fg);font-size:14px}
+.bd{display:inline-block;padding:1px 8px;border-radius:99px;font-size:11px;font-weight:600;background:var(--surface2);border:1px solid var(--line);color:var(--muted);white-space:nowrap;margin:1px}
+.bd.grn,.Low{background:var(--good-bg);color:var(--good);border-color:transparent}
+.bd.amb,.Medium{background:var(--warn-bg);color:var(--warn);border-color:transparent}
+.bd.red,.Critical{background:var(--crit-bg);color:var(--crit);border-color:transparent}
+.bd.High{background:var(--high-bg);color:var(--high);border-color:transparent}
+.bd.info{background:var(--info-bg);color:var(--info);border-color:transparent}
+.demo{background:var(--warn-bg);color:var(--warn);padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600}
+.al{padding:10px 12px;border-radius:8px;background:var(--warn-bg);color:var(--fg);border:1px solid var(--line);font-size:13px}
+.al.bad{background:var(--crit-bg)}.al.ok{background:var(--good-bg)}
+mark,ins{background:var(--mark);color:inherit;text-decoration:none;padding:0 2px;border-radius:2px}
+del{background:var(--del);color:inherit}
+.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:36px;align-items:start}
+.hero-t{display:flex;flex-direction:column;gap:16px}
+.legend{margin:10px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:var(--muted)}
+.pin{display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:600 10px var(--f-mono);font-style:normal;margin-right:5px;vertical-align:1px}
+.scale{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border-block:1px solid var(--line)}
+.scale>div{padding:14px 16px;border-left:1px solid var(--line)}
+.scale>div:first-child{border-left:0;padding-left:0}
+.scale b{display:block;font:800 30px var(--f-display);letter-spacing:-.02em}
+.scale span{font-size:12.5px;color:var(--muted)}
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;counter-reset:s}
+.flow button{counter-increment:s;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:4px}
+.flow button::before{content:counter(s);font:500 11px var(--f-mono);color:var(--accent)}
+.flow button:hover{border-color:var(--accent)}
+.flow b{font-family:var(--f-display)}
+.flow span{font-size:12.5px;color:var(--muted)}
+.spec{border:1.5px solid var(--fg);border-radius:3px;background:var(--surface);padding:12px;font:12.5px/1.55 var(--f-mono);color:var(--fg)}
+.spec-h{display:flex;justify-content:space-between;gap:8px;align-items:center;padding-bottom:6px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.sr{display:flex;gap:8px;padding:2px 0}
+.sr.two{justify-content:space-between;flex-wrap:wrap}
+.sr .k{min-width:84px;font-family:var(--f-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;padding-top:2px}
+.sr.two .k{min-width:0}
+.gap{color:var(--crit);font-style:normal;background:var(--crit-bg);padding:0 4px;border-radius:2px}
+.bar-svg{display:block;width:100%;height:28px;margin:6px 0;color:var(--fg)}
+.nobar{height:28px;margin:6px 0;border:1px dashed var(--crit);color:var(--crit);display:grid;place-items:center;font-size:11px}
+.syms{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.sym{width:34px;height:26px;border:1px solid var(--fg);display:grid;place-items:center;font:500 10px var(--f-mono);border-radius:2px}
+.sym.miss{border-style:dashed;border-color:var(--crit);color:var(--crit);background:var(--crit-bg)}
+.bars .r{display:flex;gap:8px;align-items:center;margin:5px 0}
+.bars .r>span:first-child{width:120px;flex:none}
+.trk{flex:1;background:var(--surface2);border-radius:3px;height:14px;min-width:0}
+.trk>i{display:block;height:14px;background:var(--accent);border-radius:3px;min-width:2px}
+.cmp td,.cmp th{text-align:center}.cmp td:first-child,.cmp th:first-child{text-align:left}
+.cmp .y{color:var(--good);font-weight:700}.cmp .p{color:var(--warn);font-weight:700}.cmp .n{color:var(--muted)}
+.cmp .lg{background:var(--accent-soft)}
+.cmp small{display:block;font-size:10.5px;color:var(--muted);font-weight:400}
+.chain{display:flex;flex-wrap:wrap;gap:6px}
+.chain span{padding:4px 9px;border-radius:6px;font-size:12px;border:1px solid var(--line);background:var(--surface)}
+.chain .A{background:var(--good-bg);color:var(--good)}.chain .S{background:var(--info-bg);color:var(--info)}.chain .H{background:var(--warn-bg);color:var(--warn)}.chain .F{color:var(--muted);border-style:dashed}
+.arch{overflow-x:auto}.arch svg{display:block;min-width:760px;width:100%;height:auto}
+.node{cursor:pointer}
+.node rect{fill:var(--surface);stroke:var(--line);stroke-width:1.2}
+.node:hover rect,.node:focus-visible rect{stroke:var(--accent)}
+.node.sel rect{stroke:var(--accent);stroke-width:2.4}
+.node.lit rect{fill:var(--accent-soft)}
+.node.on rect{fill:var(--accent)}
+.node.on text{fill:var(--accent-ink)!important}
+.node.road rect{stroke-dasharray:5 4}
+.nt{font:600 13px var(--f-body);fill:var(--fg)}.ns{font:11px var(--f-body);fill:var(--muted)}
+.cap{font:500 10px var(--f-mono);letter-spacing:.1em;fill:var(--muted)}
+.edge{stroke:var(--muted);stroke-width:1.4;fill:none;marker-end:url(#ah)}
+.edge.nm{marker-end:none}.edge.dash{stroke-dasharray:5 4}
+.edge.lit{stroke:var(--accent);stroke-width:2.4;marker-end:url(#ahl)}.edge.nm.lit{marker-end:none}
+#ah path{fill:var(--muted)}#ahl path{fill:var(--accent)}
+.vg rect{fill:var(--surface2);stroke:var(--line)}.vg text{font:500 11px var(--f-mono);fill:var(--fg)}
+.sd-built{fill:var(--good)}.sd-part{fill:var(--info)}.sd-sim{fill:var(--warn)}.sd-road{fill:var(--muted)}
+.art rect.bg{fill:var(--surface);stroke:var(--fg)}.art .ln{fill:var(--line)}.art .chg{fill:var(--warn-bg);stroke:var(--warn);stroke-width:1.5}.art .same{fill:none;stroke:var(--good);stroke-dasharray:3 3}
+.art text{font:500 10px var(--f-mono);fill:var(--fg)}
+.lin{display:flex;flex-wrap:wrap;gap:6px;align-items:stretch}
+.lin>div{flex:1 1 120px;border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:var(--surface);min-width:0}
+.lin small{display:block;color:var(--muted);font:500 10px var(--f-mono);text-transform:uppercase;letter-spacing:.06em}
+.lin .done{border-color:var(--good)}.lin .stop{border-color:var(--crit)}
+.ov{position:fixed;inset:0;background:rgba(6,14,20,.62);display:flex;align-items:center;justify-content:center;padding:16px;z-index:60}
+.mb{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;max-width:680px;width:100%;max-height:88vh;overflow:auto;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+#tour{position:fixed;z-index:50;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));width:min(430px,calc(100vw - 32px))}
+.tc{background:var(--surface);border:1px solid var(--accent);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;box-shadow:0 14px 44px rgba(0,0,0,.3)}
+.dots{display:flex;gap:4px}.dots i{height:4px;flex:1;background:var(--line);border-radius:2px}.dots i.d{background:var(--accent)}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:max(18px,env(safe-area-inset-bottom,0px));z-index:70;background:var(--fg);color:var(--bg);padding:9px 16px;border-radius:8px;font-size:13px;max-width:min(520px,calc(100vw - 32px));opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.show{opacity:1}
+.ap li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line);list-style:none}
+.ap ul{margin:0;padding:0}
+.ap .st{flex:none;width:18px;height:18px;border-radius:50%;border:2px solid var(--line);margin-top:2px}
+.ap .st.run{border-color:var(--accent);border-top-color:transparent;animation:spin .8s linear infinite}
+.ap .st.ok{background:var(--good);border-color:var(--good)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.ap .st.run{animation:none}#toast{transition:none}}
+@media (max-width:900px){
+#app{flex-direction:column}
+nav.side{position:static;width:auto;height:auto;display:flex;gap:4px;align-items:center;overflow-x:auto;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+nav.side .tag,nav.side .grp{display:none}nav.side .brand{margin-right:8px}
+.top{padding-left:max(16px,env(safe-area-inset-left,0px))}
+.pg{padding-left:max(16px,env(safe-area-inset-left,0px))}
+.hero{grid-template-columns:1fr}
+}
+</style>
+<div id="app"></div><div id="m"></div><div id="tour"></div><div id="toast" role="status" aria-live="polite"></div>
+<script>
+const K='lg-demo-2',$=s=>document.querySelector(s),E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm=s=>(s||'').replace(/\s/g,'').replace(/[-–—]/g,'–'),nums=s=>(s||'').match(/\d+/g)||[],has=(t,v)=>norm(t).includes(norm(v));
+const poss=(t,v)=>nums(v).length>0&&nums(v).every(n=>new RegExp('\\b'+n+'\\b').test(t));
+const ALL=['MD','TEMP','IFU','LOT','REF'],SYM={MD:'MD',TEMP:'°C',IFU:'i',LOT:'LOT',REF:'REF'},FLD={storage:'Storage statement',warn:'Warning text',mfr:'Manufacturer details'};
+const PR={'MD-101':'RapidDx Analyzer Cartridge (fictional)','MD-205':'ClearFlow Infusion Set (fictional)'};
+const mk=(id,pid,ver,mkt,lang,pack,st,rev,storage,warn,udi,mfr,ref,sym)=>({id,pid,ver,mkt,lang,pack,st,mod:'2026-09-'+(10+ver.slice(-1)*1),rev,storage,warn,udi,mfr,ref,sym,h:[]});
+const M0='Meditec Labs Inc., Boston, USA',U0='(01)08901234500011';
+const DEF={pid:'MD-101',cat:'Product specification',field:'storage',old:'2–8°C',nw:'2–10°C',reason:'Illustrative stability-data update (fictional; not a validated specification).',src:'ECO-2026-0147 (fictional)'};
+const PRE=[['Storage range widened, MD-101',DEF],['Storage range widened, MD-205',{pid:'MD-205',cat:'Product specification',field:'storage',old:'15–25°C',nw:'15–30°C',reason:'Illustrative change (fictional).',src:'ECO-2026-0152 (fictional)'}],['Warning wording, MD-101',{pid:'MD-101',cat:'Regulatory requirement',field:'warn',old:'Do not use if package is damaged.',nw:'Do not use if package is open or damaged.',reason:'Illustrative wording update (fictional).',src:'REG-2026-031 (fictional)'}]];
+const seed=()=>({labels:[
+mk('L-101-US-EN-C','MD-101','2.1','US','EN','Unit carton','Released','A. Rao','Store at 2–8°C','Rx only. Do not use if package is damaged.',U0,M0,'MD-101',ALL),
+mk('L-101-US-EN-S','MD-101','2.0','US','EN','Shipper','Released','A. Rao','Store at 2–8°C','Handle with care. Keep dry.',U0,M0,'MD-101',ALL),
+mk('L-101-US-ES-C','MD-101','1.3','US','ES','Unit carton','Released','A. Rao','Almacenar a 2–8 °C','Solo con receta. No usar si el envase está dañado.',U0,M0,'MD-101',ALL),
+mk('L-101-EU-EN-P','MD-101','2.1','EU','EN','Pouch','Under review','S. Iyer','Store at 2-8 °C','Do not use if package is damaged.','(01)08901234500028',M0,'MD-101',ALL),
+mk('L-101-EU-DE-C','MD-101','1.8','EU','DE','Unit carton','Released','S. Iyer','Lagerung bei 2–8 °C','Nicht verwenden, wenn die Verpackung beschädigt ist.','(01)08901234500028','','MD-101',ALL),
+mk('L-101-EU-FR-C','MD-101','1.8','EU','FR','Unit carton','Released','S. Iyer','Conserver entre 2 et 8 °C','Ne pas utiliser si l’emballage est endommagé.','(01)08901234500028',M0,'MD-110',ALL),
+mk('L-101-JP-JA-C','MD-101','1.2','JP','JA','Unit carton','Released','K. Mehta','保管温度 2–8°C','包装が破損している場合は使用しないこと。','(01)08901234500035',M0,'MD-101',['MD','TEMP','LOT','REF']),
+mk('L-205-US-EN-C','MD-205','3.0','US','EN','Unit carton','Released','A. Rao','Store at 15–25°C','Single use. Do not resterilize.','(01)08901234500042',M0,'MD-205',ALL),
+mk('L-205-EU-EN-C','MD-205','3.0','EU','EN','Unit carton','Retired','S. Iyer','Store at 15–25°C','Single use. Do not resterilize.','(01)08901234500059',M0,'MD-205',ALL)],
+ch:null,form:null,drafts:{},sel:[],cur:null,rv:null,fs:'',fc:'',af:'',q:'',mkf:'',stf:'',det:{},
+audit:[{t:'2026-09-01 09:00',who:'System',ev:'Demo dataset loaded (fictional data)',ref:'—'},{t:'2026-09-12 14:20',who:'A. Rao (demo)',ev:'Label L-101-US-EN-C v2.1 released',ref:'L-101-US-EN-C'}]});
+let S=null;try{S=JSON.parse(localStorage.getItem(K)||'null')}catch(e){S=null}
+S=S||seed();
+let R='story',T={on:false,i:0},A={sel:'e1'},ap=null,flowTimer=null,toastT=null,rstT=null,lastR='';
+const sv=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+const now=()=>new Date().toISOString().slice(0,16).replace('T',' ');
+const au=(ev,ref,who='You (demo)')=>S.audit.unshift({t:now(),who,ev,ref});
+const bd=(c,t)=>`<span class="bd ${c}">${E(t)}</span>`,L=id=>S.labels.find(l=>l.id===id);
+const bump=v=>(Math.round((+v+.1)*10)/10).toFixed(1);
+const blk=d=>(d.fi||[]).filter(f=>f.sev=='Critical'||f.sev=='High');
+const rel=d=>d&&d.st=='Approved'?bd('grn','Release-ready (SIMULATED)'):bd('red','Release on hold');
+const ST={built:['grn','Built'],part:['info','Partly built'],sim:['amb','Simulated'],road:['','Roadmap']},stb=k=>bd(ST[k][0],ST[k][1]);
+const D=()=>Object.values(S.drafts),allF=()=>D().flatMap(d=>(d.fi||[]).map((f,i)=>({d,f,i})));
+function match(){const c=S.ch;if(!c)return[];return S.labels.filter(l=>l.pid==c.pid).map(l=>{const t=l[c.field];const m=has(t,c.old)?'Exact':poss(t,c.old)?'Possible':null;
+return m?{l,m,why:m=='Exact'?`Field “${FLD[c.field]}” contains old value “${c.old}” (normalised text match)`:`Numbers from “${c.old}” appear in “${t}” but wording differs. Likely a translation, so a linguist needs to review it.`}:null}).filter(Boolean)}
+function unmatched(){const c=S.ch;if(!c)return[];const ids=new Set(match().map(x=>x.l.id));return S.labels.filter(l=>l.pid==c.pid&&!ids.has(l.id))}
+function mkDraft(id){const l=L(id),c=S.ch;if(S.drafts[id])return;const x={storage:l.storage,warn:l.warn,udi:l.udi,mfr:l.mfr,ref:l.ref,sym:[...l.sym]};
+const o={storage:l.storage,warn:l.warn,udi:l.udi,mfr:l.mfr,ref:l.ref,sym:[...l.sym],ver:l.ver};
+const re=new RegExp(c.old.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/[-–]/g,'[-–]').replace(/°/g,'\\s*°'));
+x[c.field]=x[c.field].replace(re,m=>/\s°/.test(m)?c.nw.replace('°',' °'):c.nw);
+S.drafts[id]={id,x,o,st:'Draft',base:l.ver,fi:null,cm:[],dec:[],src:c.src};au('Draft created for '+id+' (AI-assisted draft, unapproved)',id,'Drafting engine')}
+function val(d){const x=d.x,c=S.ch,o=[],pid=L(d.id).pid,a=(sev,cat,t,det,rule,src,act)=>o.push({sev,cat,t,det,rule,src,act,h:'Yes. A qualified reviewer must confirm.'});
+[['mfr','Manufacturer'],['warn','Warning statement'],['udi','UDI'],['storage','Storage statement']].forEach(([k,n])=>!x[k].trim()&&a('Critical','Missing field',n+' is missing',`The “${n}” field is empty in the draft.`,'R1 Required-field presence (demo rule)',d.id+' › '+n,'Populate from approved product data.'));
+x.ref!==pid&&a('Critical','Identifier mismatch','REF does not match product ID',`REF on label is “${x.ref}” but the product record is “${pid}”.`,'R2 REF equals product ID (demo rule)',d.id+' › REF','Correct REF to '+pid+'.');
+x.udi&&!/^\(01\)\d{14}$/.test(x.udi)&&a('High','Identifier','UDI-like pattern invalid',`“${x.udi}” is not (01)+14 digits.`,'R3 UDI-like pattern (demo, not GS1/FDA validation)',d.id+' › UDI','Verify UDI against issuing-agency data.');
+const t=x[c.field]||'';if(has(t,c.old)&&!has(t,c.nw))a('Critical','Superseded value','Old value still on draft',`“${c.old}” remains in ${FLD[c.field]}.`,'R4 Superseded-value check',d.id+' › '+FLD[c.field],`Replace with “${c.nw}”.`);
+else if(!has(t,c.nw)&&!poss(t,c.nw))a('High','Translation consistency','Translated value does not match proposed value',`Draft text “${t}” does not carry the numbers in “${c.nw}”.`,'R5 Numeric consistency across languages',d.id+' › '+FLD[c.field],`Edit translation to reflect “${c.nw}” (qualified linguist review).`);
+ALL.filter(s=>!x.sym.includes(s)).forEach(s=>a('Medium','Symbol presence','Symbol '+s+' not listed',`Required demo symbol ${s} absent from draft symbol list.`,'R6 Symbol list (demo; not an ISO 15223-1 check)',d.id+' › Symbols','Add the symbol per approved artwork.'));
+o.push({sev:'Low',cat:'Artwork (SIMULATED)',t:'Barcode region comparison',det:'Simulated computer-vision result: no barcode change. No real image analysis is run.',rule:'R7 Simulated stub',src:'Artwork stub',act:'Visually confirm artwork.',h:'Yes'});return o}
+function runVal(d){d.fi=val(d);d.fi.forEach(f=>{S.det[d.id+'|'+f.rule.split(' ')[0]]=1});if(d.st!='In review'&&d.st!='Approved')d.st='Validated';au(`Validation run: ${d.fi.length} findings, ${blk(d).length} blocking`,d.id,'Rule engine')}
+function approveDraft(d,who='Reviewer (demo)'){const l=L(d.id);l.h.push({ver:l.ver,note:'superseded'});Object.assign(l,d.x,{ver:bump(l.ver),st:'Released',mod:now().slice(0,10)});d.st='Approved';d.dec.push(now()+' Approved (DEMO) → v'+l.ver);au('Approved demo revision → v'+l.ver,d.id,who)}
+function fixes(d){const pid=L(d.id).pid;let n=0;const x=d.x;if(!x.mfr.trim()){x.mfr=M0;n++}if(x.ref!==pid){x.ref=pid;n++}ALL.forEach(s=>{if(!x.sym.includes(s)){x.sym.push(s);n++}});if(n){d.fi=null;au(`Assisted fixes applied (${n}); needs re-validation and reviewer confirmation`,d.id,'Drafting engine')}return n}
+function setChange(c){S.ch={...c};S.form={...c};const m=match();S.sel=m.filter(x=>x.m=='Exact'&&x.l.st!='Retired').map(x=>x.l.id);S.drafts={};S.cur=null;S.rv=null;S.imp={ex:m.filter(x=>x.m=='Exact').length,ps:m.filter(x=>x.m=='Possible').length,tot:m.length};
+m.forEach(x=>{if(x.l.id=='L-101-EU-EN-P'&&x.m=='Exact'&&/-/.test(x.l[c.field]))S.det['L-101-EU-EN-P|FMT']=1});
+au(`Change request: ${c.pid} ${FLD[c.field]} “${c.old}” → “${c.nw}”; ${m.length} labels flagged`,c.pid)}
+const isDef=()=>S.ch&&S.ch.pid==DEF.pid&&S.ch.field==DEF.field&&S.ch.old==DEF.old&&S.ch.nw==DEF.nw;
+function stageDrafts(){if(!isDef()&&!S.ch)setChange(DEF);const ids=match().filter(x=>x.l.st!='Retired').map(x=>x.l.id);ids.forEach(mkDraft);S.sel=ids;S.cur=S.cur&&S.drafts[S.cur]?S.cur:ids[0]}
+function stageValidate(){stageDrafts();D().forEach(runVal)}
+function stageDecide(){stageValidate();D().forEach(d=>{if(d.st=='Approved')return;if(d.st!='In review'){d.st='In review';au('Submitted for review',d.id)}if(blk(d).length)au(`Release blocked: ${blk(d).length} unresolved Critical/High findings`,d.id,'Release gate');else approveDraft(d)});const h=D().find(d=>d.st=='In review');S.rv=h?h.id:(D()[0]||{}).id||null}
+const cnt=()=>{const m=match(),F=allF();return{ex:m.filter(x=>x.m=='Exact').length,ps:m.filter(x=>x.m=='Possible').length,tot:m.length,F:F.length,bl:F.filter(x=>x.f.sev=='Critical'||x.f.sev=='High').length,ap:D().filter(d=>d.st=='Approved').length,held:D().filter(d=>d.st=='In review'&&blk(d).length).length}};
+function parseNL(t){const m=t.match(/from\s+(.+?)\s+to\s+(.+?)\s*(?:[.;]|$)/i);if(!m)return null;const pid=(t.match(/MD-\d{3}/i)||[])[0];let field='storage';if(/warn|caution|precaution/i.test(t))field='warn';else if(/manufactur/i.test(t))field='mfr';
+const cl=s=>s.trim().replace(/^["“'‘]|["”'’]$/g,'');return{pid:pid?pid.toUpperCase():null,field,old:cl(m[1]),nw:cl(m[2])}}
+function wdiff(a,b){a=a||'';b=b||'';if(a===b)return E(b);
+const A=a.split(/(\s+)/).filter(x=>x!==''),B=b.split(/(\s+)/).filter(x=>x!==''),n=A.length,m=B.length,dp=Array.from({length:n+1},()=>new Array(m+1).fill(0));
+for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)dp[i][j]=A[i]===B[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+let i=0,j=0,o='';while(i<n&&j<m){if(A[i]===B[j]){o+=E(A[i]);i++;j++}else if(dp[i+1][j]>=dp[i][j+1]){o+='<del>'+E(A[i])+'</del>';i++}else{o+='<ins>'+E(B[j])+'</ins>';j++}}
+while(i<n){o+='<del>'+E(A[i++])+'</del>'}while(j<m){o+='<ins>'+E(B[j++])+'</ins>'}return o}
+function barcode(udi){const d=(udi||'').replace(/\D/g,'');if(!d)return'<div class="nobar">No UDI on this draft</div>';let x=0,r='';
+for(const ch of d){const n=+ch;[1+n%3,1,1+(n>>1)%3,1].forEach((w,k)=>{if(k%2==0)r+=`<rect x="${x}" y="0" width="${w}" height="30"/>`;x+=w})}
+return`<svg class="bar-svg" viewBox="0 0 ${x} 30" preserveAspectRatio="none" role="img" aria-label="Illustrative barcode, not a GS1 symbol"><g fill="currentColor">${r}</g></svg>`}
+function specimen(o,id,opt={}){const f=opt.from,pin=k=>opt.pins&&opt.pins[k]?`<i class="pin">${opt.pins[k]}</i>`:'',
+row=(k,n)=>{const v=o[k];const body=!v?'<i class="gap">(empty)</i>':(f&&f[k]!==v?wdiff(f[k],v):E(v));return`<div class="sr"><span class="k">${n}</span><span>${pin(k)}${body}</span></div>`};
+return`<div class="spec"><div class="spec-h"><b>${E(id)}</b>${opt.tag||''}</div><div class="sr two"><span>${pin('ref')}<span class="k">REF</span> ${E(o.ref)||'<i class="gap">(empty)</i>'}</span><span>${pin('udi')}<span class="k">UDI</span> ${E(o.udi)||'<i class="gap">(empty)</i>'}</span></div>${barcode(o.udi)}${row('storage','Storage')}${row('warn','Warning')}${row('mfr','Manufacturer')}<div class="syms">${ALL.map(s=>`<span class="sym ${o.sym.includes(s)?'':'miss'}" title="${s}${o.sym.includes(s)?'':' (missing)'}">${SYM[s]}</span>`).join('')}</div></div>`}
+const tbl=(h,r)=>`<div class="tw"><table><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${r.join('')||`<tr><td colspan="${h.length}">No records match.</td></tr>`}</table></div>`;
+const bars=o=>{const m=Math.max(1,...Object.values(o));return`<div class="bars">${Object.entries(o).map(([k,v])=>`<div class="r"><span>${E(k)}</span><div class="trk"><i style="width:${v/m*100}%"></i></div><b>${v}</b></div>`).join('')}</div>`};
+const SEEDED=[['L-101-EU-DE-C|R1','Missing manufacturer on the German carton','R1'],['L-101-EU-FR-C|R2','Wrong REF (MD-110) on the French carton','R2'],['L-101-JP-JA-C|R6','Missing IFU symbol on the Japanese carton','R6'],['L-101-EU-EN-P|FMT','Hyphen and spacing variant “2-8 °C” on the EU pouch','normalised match']];
+
+const NAV=[['Pitch',[['story','The idea'],['nov','Novelty'],['arch','Architecture'],['cov','Problem coverage'],['road','Feasibility & roadmap']]],['Live demo',[['dash','Control center'],['lib','Products & labels'],['impact','Change impact'],['studio','Label studio'],['val','Validation'],['appr','Approvals'],['trace','Traceability'],['ana','Analytics'],['src','Sources & method']]]];
+const TITLES=Object.fromEntries(NAV.flatMap(g=>g[1]));
+const P={};
+P.story=()=>{const ex={ref:'MD-101',udi:U0,mfr:M0,storage:'Store at 2–10°C',warn:'Rx only. Do not use if package is damaged.',sym:ALL},was={...ex,storage:'Store at 2–8°C'};
+return`<div class="hero"><div class="hero-t"><p class="eyebrow">Teliport Season 4 · Case study 4 · Medical device labeling</p>
+<h1>One change should find its own labels, draft its own revisions, check itself, then wait for a person.</h1>
+<p class="lead">LabelGuard AI is a change-driven labeling platform. It starts from the product or regulatory change instead of a blank label, keeps evidence for every finding, and holds release until a qualified reviewer decides.</p>
+<div class="row"><button class="btn" data-a="tour">Start guided tour</button><button class="btn ghost" data-a="auto">Run autopilot demo</button><button class="btn ghost" data-a="nav" data-v="dash">Open live demo</button></div>
+<p class="note">All data is fictional. Every function is tagged built, simulated or roadmap, so nothing here is overstated.</p></div>
+<div><div class="eyebrow" style="margin-bottom:6px">Sample label MD-101, redlined by one change</div>${specimen(ex,'L-101-US-EN-C',{from:was,pins:{storage:'A',udi:'B',ref:'C'},tag:bd('amb','UNAPPROVED DRAFT')})}
+<ul class="legend"><li><i class="pin">A</i>The change: storage range updated in the product record.</li><li><i class="pin">B</i>UDI pattern checked by rule R3 before release.</li><li><i class="pin">C</i>REF must equal the product ID (rule R2). The French carton fails this.</li></ul></div></div>
+<div><div class="scale"><div><b>30+</b><span>labels touched by one product change</span></div><div><b>20+</b><span>languages</span></div><div><b>Multiple</b><span>packaging levels</span></div><div><b>Regional</b><span>regulatory requirements</span></div></div><p class="note" style="margin-top:6px">From the Case Study 4 problem context: a single product change may require updates to all of these.</p></div>
+<div class="stack"><h2>What the case study asks, and our answer</h2>${tbl(['Case study key takeaway','LabelGuard AI answer','Where'],[
+['Automation. Which manual work can go?','Impact search, draft substitution, redlines and repeat checks run by rules. People keep the decisions.','impact'],
+['AI driven. AI reviews, GenAI drafts.','Drafting engine proposes revisions from controlled data (simulated now, LLM grounded in the data store next).','studio'],
+['Compliance built into the system','Rule library R1–R7 runs on every draft. Each rule names its reference and is marked demo or real.','val'],
+['Innovation. Labels that self-validate.','A draft cannot reach release while Critical or High findings remain.','appr'],
+['Digital transformation','One variant graph and one audit ledger replace spreadsheets and copy between PLM, ERP and labeling tools.','arch'],
+['Patient safety. Stop errors before market.','Wrong REF, missing manufacturer, stale value and mismatched translation are caught before approval.','val']].map(r=>`<tr data-a="nav" data-v="${r[2]}"><td>${r[0]}</td><td>${r[1]}</td><td><button class="btn ghost sm">Open</button></td></tr>`))}</div>
+<div class="stack"><h2>How one change flows</h2><div class="flow">${[['Change in','A product or regulatory change is entered with a reason and a source.','impact'],['Impact found','Every affected variant is listed with the reason it matched.','impact'],['Revision drafted','Each variant gets an unapproved draft and a word-level redline.','studio'],['Checked with evidence','Findings show the rule, the location and the action.','val'],['Human decision','Reviewer approves, rejects or asks for changes. The gate enforces holds.','appr']].map(s=>`<button data-a="nav" data-v="${s[2]}"><b>${s[0]}</b><span>${s[1]}</span></button>`).join('')}</div></div>`};
+const PROC=[['Product / design information','A'],['Product understanding','S'],['Identify applicable markets','A'],['Regulatory requirement assessment','S'],['Gap assessment','A'],['Identify labeling gaps','A'],['Gap addressal','S'],['Label content development','S'],['Redline / artwork modification','A'],['Stakeholder review','S'],['Regulatory / quality approval','H'],['Label revision','S'],['Change order creation','A'],['Document / configuration control','A'],['Final quality check','S'],['Label release','H'],['Manufacturing','F'],['Production implementation','F']];
+const CMP=[['Starts from a change request','p','n','n','n',['y','Built']],['Finds every affected variant','n','n','n','n',['y','Built, text matching']],['Drafts the revision from controlled data','n','y','n','n',['y','Simulated drafting']],['Checks fields, identifiers, symbols','n','p','y','n',['y','Built, R1–R6']],['Checks translation consistency','n','p','p','p',['p','Built, numbers only']],['Compares old and revised artwork','n','n','n','y',['p','Simulated']],['Shows rule and source for each finding','n','n','p','p',['y','Built']],['Holds release on critical findings','p','n','p','n',['y','Built']],['One audit trail from change to release','p','n','n','n',['y','Built']]];
+P.nov=()=>{const g=k=>PROC.filter(p=>p[1]==k).length,mark={y:'●',p:'◐',n:'○'};
+return`<div class="stack"><p class="eyebrow">Novelty</p><h2>What is new, and what is not</h2><p class="sub">AI label writers, rule checkers and artwork comparison already exist, and the case study lists them as approaches. We do not claim any one of them as new. The new part is how they connect around a change.</p></div>
+<div class="g2">${[['Impact before revision','The system traces a change to affected label variants first, then drafts. Teams stop starting from a blank label.','impact'],['Evidence with every finding','Each finding names the rule, the label location, the recommended action and whether a human must confirm.','val'],['Risk-aware release gate','Unresolved Critical or High findings hold release. Qualified humans keep final approval.','appr'],['One variant graph, one ledger','Change, source, labels, drafts, findings and decisions share one record, so “why is this on the label” has an answer.','trace']].map(n=>`<div class="c stack"><h3>${n[0]}</h3><p>${n[1]}</p><div><button class="btn ghost sm" data-a="nav" data-v="${n[2]}">See it in the demo</button></div></div>`).join('')}</div>
+<div class="stack"><h3>Where the connected workflow differs</h3><div class="c tw"><table class="cmp"><tr><th>Capability</th><th>Spreadsheets + PLM workflow</th><th>Standalone AI label writer</th><th>Rule-based checker</th><th>Artwork comparison tool</th><th class="lg">LabelGuard AI</th></tr>${CMP.map(r=>`<tr><td>${r[0]}</td>${r.slice(1,5).map(v=>`<td class="${v}">${mark[v]}</td>`).join('')}<td class="lg ${r[5][0]}">${mark[r[5][0]]}<small>${r[5][1]}</small></td></tr>`).join('')}</table></div>
+<p class="note">● does it  ◐ partly  ○ typically does not. A generalised view of what each category usually does, to show where the connected workflow differs. It is not a review of any specific product. The last column shows what this prototype actually implements.</p></div>
+<div class="stack"><h3>The traditional process, step by step</h3><p class="sub">The 18 steps listed in the case study, tagged by how LabelGuard AI treats each one.</p><div class="chain">${PROC.map(p=>`<span class="${p[1]}">${p[0]}</span>`).join('')}</div>
+<p class="note"><span class="bd grn">Automated ${g('A')}</span> <span class="bd info">AI-assisted, human confirms ${g('S')}</span> <span class="bd amb">Human decision ${g('H')}</span> <span class="bd">Out of scope for now ${g('F')}</span></p></div>
+<div class="c stack"><h3>What we do not claim</h3><p>We do not claim regulatory certification, a validated rules engine, real computer vision or a connected LLM in this prototype. Rules R1–R6 are demo rules over fictional data. Every regulatory interpretation, translation, symbol, UDI and release decision needs qualified human review.</p></div>`};
+
+const AN={
+s1:{x:10,y:30,w:180,h:78,l:['Change request','PLM / ERP / ECO','plain-language request'],st:'part',route:'impact',what:'A product-spec change, a requirement change or a plain-language request enters as a structured change record with a reason and a source reference such as an ECO number.',tech:'Form and plain-language parser now. PLM and ERP connectors, REST and webhooks later.',stat:'The form and the parser work in the demo. No PLM or ERP link exists yet.',ps:'Pain point 4 · Approach 7'},
+s2:{x:10,y:130,w:180,h:78,l:['Regulatory references','FDA · EU MDR · ISO · UDI','curated library'],st:'part',route:'src',what:'A curated reference set that rules point back to, so each check can name the document it comes from.',tech:'Curated documents indexed for retrieval. A rule library kept by Regulatory Affairs.',stat:'Seven references are listed on the Sources page. Demo rules are not regulatory requirements.',ps:'Pain points 2, 5 · Approach 2, 5'},
+s3:{x:10,y:230,w:180,h:78,l:['Label PDFs & artwork','approved and revised','files'],st:'sim',route:'val',what:'Approved and revised artwork enter for comparison of text, barcode region and layout.',tech:'pdf.js and Tesseract OCR for text. OpenCV or perceptual diff for layout. A barcode decoder for UDI regions.',stat:'Simulated. The Validation page draws a mock comparison and runs no image analysis.',ps:'Pain point 6 · Approach 4'},
+s4:{x:10,y:330,w:180,h:78,l:['Glossary & translations','approved terminology','linguist review'],st:'road',route:'src',what:'Approved terminology and translation memory, so wording differences between languages are checked against a glossary.',tech:'Translation memory, terminology glossary, a linguist review queue.',stat:'Roadmap. The prototype only checks that numbers agree across languages (rule R5).',ps:'Approach 6'},
+store:{x:235,y:30,w:185,h:378,l:['Controlled data store','single source of truth'],st:'part',route:'lib',what:'Product master, label variants, symbols, rule library and version history in one place. Variants form a graph: product, market, language, packaging, label element.',tech:'PostgreSQL with relational links for the graph. Object storage for artwork files.',stat:'Nine fictional label variants in browser storage. The graph is shown as a design, not yet built.',ps:'Pain points 4, 9'},
+e1:{x:470,y:30,w:200,h:72,l:['1  Change impact engine','finds affected variants','exact and possible matches'],st:'built',route:'impact',what:'Matches the old value against every variant of the product after normalising spaces, hyphens and units. Exact and Possible matches carry a reason. Variants that were not matched are listed for a human check.',tech:'Deterministic text and numeric matching now. Variant graph queries and translation memory later.',stat:'Built. Runs live on the sample data.',ps:'Pain points 2, 9 · Approach 3'},
+e2:{x:470,y:125,w:200,h:72,l:['2  Revision drafting','grounded in controlled data','marked unapproved'],st:'sim',route:'studio',what:'Substitutes the new value into each variant, keeps each language’s spacing, and shows a word-level redline. Every draft is labelled unapproved.',tech:'Deterministic substitution now. An LLM drafting new wording from the data store only, with citations, later.',stat:'Simulated AI drafting. The substitution and redline are real.',ps:'Pain points 1, 6 · Approach 1, 7'},
+e3:{x:470,y:220,w:200,h:72,l:['3  Validation engine','rules R1–R7 with evidence','severity and action'],st:'part',route:'val',what:'Runs rules for required fields, REF, UDI pattern, superseded values, numeric consistency across languages and required symbols. Each finding shows severity, rule, location, action and a human-review flag.',tech:'Rules engine now. OCR, image diff and barcode decode for artwork later.',stat:'Rules R1–R6 are real. R7 artwork is a simulated stub.',ps:'Pain points 3, 7, 10 · Approach 2, 6'},
+e4:{x:470,y:315,w:200,h:72,l:['4  Review & release gate','approve · reject · hold','critical findings block'],st:'built',route:'appr',what:'Routes a validated draft to a reviewer. Approve is refused while Critical or High findings remain. Rejections need a reason and keep the current version live.',tech:'State machine now. Roles, e-signature and notifications later.',stat:'Built as a prototype gate. It is not a real regulatory authorisation.',ps:'Pain points 1, 10'},
+e5:{x:470,y:410,w:200,h:72,l:['Regulatory watch','FDA · MDR alerts','feeds change requests'],st:'road',route:'cov',what:'Monitors regulatory updates and opens a change request when a requirement affects a variant.',tech:'Scheduled retrieval of official sources, classification with an LLM, human triage.',stat:'Roadmap. Not built.',ps:'Pain point 2 · Approach 5'},
+led:{x:725,y:30,w:265,h:150,l:['Evidence & audit ledger','who changed what, and why','source and rule for each finding','version history'],st:'built',route:'trace',what:'An append-only record from change to release. Any label element can be traced to product data, a requirement, a source, an approval and a change order.',tech:'Append-only event log now. Signed, immutable storage later.',stat:'Built. Every action in the demo writes an event.',ps:'Pain point 8'},
+ana:{x:725,y:205,w:265,h:110,l:['Reports & analytics','review time, errors, coverage','seeded-error test set'],st:'part',route:'ana',what:'Reports measured results on a test set: seeded errors caught, affected labels found, traceability completeness. Timing figures are assumptions until measured.',tech:'Computed from the ledger and a labelled test set.',stat:'Metrics on the sample set are computed. Timing figures are assumed.',ps:'Evaluation: accuracy and validation'},
+ppl:{x:725,y:340,w:265,h:142,l:['People','Regulatory Affairs · Labeling','QA · Manufacturing','Supply chain · Clinical · IT'],st:'part',route:'appr',what:'Regulatory Affairs owns impact assessment, Labeling Engineers own drafts, QA owns validation and release, Manufacturing receives print-ready files, Supply Chain uses traceability.',tech:'Role-based access and queues later.',stat:'The demo has a single reviewer role.',ps:'Stakeholders'}};
+const AE=[['M190 69H235','store'],['M190 169H235','store'],['M190 269H235','store'],['M190 369H235','store','dash'],['M420 66H470','e1'],['M570 102V125','e2'],['M570 197V220','e3'],['M570 292V315','e4'],['M670 66H700V351M670 161H700M670 256H700M670 351H700','led','nm'],['M700 105H725','led'],['M700 260H725','led'],['M700 351H725','led'],['M470 446H400V408','e5','dash']];
+const FLOW=['s1','store','e1','e2','e3','e4','led'];
+const nodeSvg=(id)=>{const n=AN[id];return`<g class="node ${n.st=='road'?'road':''} ${A.sel==id?'sel':''}" data-a="node" data-v="${id}" data-node="${id}" tabindex="0" role="button" aria-label="${E(n.l[0])}"><rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="8"/><circle class="sd-${n.st}" cx="${n.x+n.w-14}" cy="${n.y+14}" r="5"/>${n.l.map((t,i)=>`<text class="${i?'ns':'nt'}" x="${n.x+12}" y="${n.y+(i?24+i*16:22)}">${E(t)}</text>`).join('')}</g>`};
+const archDetail=id=>{const n=AN[id];return`<div class="row"><h3>${E(n.l[0].replace(/^\d\s+/,''))}</h3>${stb(n.st)}</div><div class="g3"><div><div class="k">What it does</div><p>${E(n.what)}</p></div><div><div class="k">Built with</div><p>${E(n.tech)}</p></div><div><div class="k">In this prototype</div><p>${E(n.stat)}</p><p class="note" style="margin-top:6px">Addresses: ${E(n.ps)}</p></div></div><div><button class="btn sm" data-a="nav" data-v="${n.route}">Open in the demo</button></div>`};
+P.arch=()=>{const vg=['Product','Market','Language','Packaging','Label element'];
+return`<div class="stack"><p class="eyebrow">Architecture</p><h2>How the modules connect</h2><p class="sub">Sources feed one controlled data store. Four engines pass work in order, and every step writes to the audit ledger. Select a block to see what it does, what it is built with, and whether it exists in this prototype.</p></div>
+<div class="row"><button class="btn" data-a="flow">Play the change flow</button><span class="note">Status:</span>${stb('built')}${stb('part')}${stb('sim')}${stb('road')}</div>
+<div class="c arch"><svg viewBox="0 0 1000 500" role="img" aria-label="Architecture diagram of LabelGuard AI"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z"/></marker><marker id="ahl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z"/></marker></defs>
+<text class="cap" x="10" y="20">SOURCES</text><text class="cap" x="235" y="20">DATA</text><text class="cap" x="470" y="20">ENGINES</text><text class="cap" x="725" y="20">OUTCOMES</text>
+${AE.map((e,i)=>`<path class="edge ${e[2]||''}" data-to="${e[1]}" d="${e[0]}"/>`).join('')}
+<g class="vg" pointer-events="none"><text x="255" y="124" style="font-size:10px;letter-spacing:.1em;fill:var(--muted)">VARIANT GRAPH</text>${vg.map((t,i)=>`<rect x="255" y="${134+i*52}" width="145" height="32" rx="5"/><text x="268" y="${154+i*52}">${t}</text>${i<4?`<path d="M327 ${166+i*52}V${186+i*52}" stroke="var(--muted)" stroke-width="1.2" fill="none"/>`:''}`).join('')}</g>
+${Object.keys(AN).map(nodeSvg).join('')}</svg></div>
+<div class="c stack" id="nodeDetail">${archDetail(A.sel)}</div>`};
+function playFlow(){clearInterval(flowTimer);let i=0;const paint=()=>{const lit=new Set(FLOW.slice(0,i+1));document.querySelectorAll('[data-node]').forEach(n=>{const id=n.dataset.node;n.classList.toggle('on',id==FLOW[i]);n.classList.toggle('lit',lit.has(id)&&id!=FLOW[i])});document.querySelectorAll('.edge').forEach(e=>e.classList.toggle('lit',lit.has(e.dataset.to)));if(FLOW[i]){A.sel=FLOW[i];document.querySelectorAll('[data-node]').forEach(n=>n.classList.toggle('sel',n.dataset.node==A.sel));const d=$('#nodeDetail');if(d)d.innerHTML=archDetail(A.sel)}};
+paint();flowTimer=setInterval(()=>{i++;if(i>=FLOW.length){clearInterval(flowTimer);return}paint()},1000)}
+const PS_PAIN=[['Time-consuming manual process','Impact search, drafting and repeat checks are automated. Review is routed instead of emailed.','part','impact'],['Frequent regulatory updates','The impact engine finds affected variants for any change. A regulatory watch that opens changes automatically is roadmap.','part','impact'],['Symbol management','Rule R6 checks the required symbol list per draft. A market-aware symbol library is next.','part','val'],['Multiple sources of truth','One controlled data store holds product master, variants and versions. PLM and ERP connectors are roadmap.','part','lib'],['Expertise dependency','Rules and evidence capture what experts check, and every finding explains itself.','part','val'],['Manual redlining','Word-level redline between approved and proposed text is built. Artwork diff is simulated.','part','studio'],['Repetitive review','Required fields, REF, UDI pattern, symbols and superseded values are checked on every draft.','built','val'],['Traceability','Ledger, lineage and per-element provenance link change, source, draft, finding, decision and version.','built','trace'],['Variant explosion','Variants are listed, filtered and flagged per change. The variant graph scales this design.','part','lib'],['Human error','Draft substitution replaces copy and paste. Identifier checks and the release gate stop known error types.','built','appr']];
+const PS_APP=[['GenAI label authoring assistant','Drafting engine with word-level redline. LLM drafting grounded in the data store is next.','sim','studio'],['AI compliance checker','Rules R1–R6 run live. Uploading label PDFs is roadmap.','part','val'],['Smart change impact engine','Impacted labels, markets and required actions, with the reason for each match.','built','impact'],['Computer-vision artwork validation','Simulated comparison panel. OpenCV and barcode decode are planned.','sim','val'],['Autonomous regulatory intelligence bot','Not built. Shown on the architecture as a source of change requests.','road','arch'],['Smart translation validation','Numeric consistency across languages is built. Glossary checks are roadmap.','part','val'],['Voice or prompt to label creation','Plain-language change requests are parsed into a change record. Label creation then follows the normal flow.','part','impact'],['Predictive label quality analytics','Not built. The ledger and findings history are the data it would learn from.','road','ana'],['Augmented reality label verification','Out of scope for this phase.','road','road'],['Agentic AI labeling ecosystem','Each engine is a callable service, so agents can take those roles with human sign-off kept.','road','arch']];
+const CRIT=[['Understanding of labeling problem','The idea, Novelty process map','story'],['Regulatory and compliance awareness','Sources and method, rule references','src'],['Innovation in label design using AI','Novelty, Label studio','nov'],['AI and automation platform','Architecture','arch'],['End-to-end process coverage','Novelty process map, live demo','nov'],['Accuracy and validation approach','Analytics, seeded-error test set','ana'],['Traceability and auditability','Traceability','trace']];
+P.cov=()=>{const all=[...PS_PAIN,...PS_APP],c=k=>all.filter(r=>r[2]==k).length;
+return`<div class="stack"><p class="eyebrow">Problem coverage</p><h2>The case study, point by point</h2><p class="sub">All 10 points the case study says a solution must address, and all 10 suggested approaches, with an honest status for each. Across the 20 rows: <b>${c('built')}</b> built, <b>${c('part')}</b> partly built, <b>${c('sim')}</b> simulated, <b>${c('road')}</b> roadmap.</p></div>
+<div class="stack"><h3>Proposed solutions should explicitly address</h3><div class="c">${tbl(['#','Point','How LabelGuard AI addresses it','Status',''],PS_PAIN.map((r,i)=>`<tr><td class="num">${i+1}</td><td>${r[0]}</td><td>${r[1]}</td><td>${stb(r[2])}</td><td><button class="btn ghost sm" data-a="nav" data-v="${r[3]}">See</button></td></tr>`))}</div></div>
+<div class="stack"><h3>Potential approaches</h3><div class="c">${tbl(['#','Approach','Our take','Status',''],PS_APP.map((r,i)=>`<tr><td class="num">${i+1}</td><td>${r[0]}</td><td>${r[1]}</td><td>${stb(r[2])}</td><td>${r[3]=='road'?'':`<button class="btn ghost sm" data-a="nav" data-v="${r[3]}">See</button>`}</td></tr>`))}</div></div>
+<div class="stack"><h3>Evaluation criteria, and where to look</h3><div class="c">${tbl(['Criterion','Where','',],CRIT.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td><button class="btn ghost sm" data-a="nav" data-v="${r[2]}">Open</button></td></tr>`))}</div></div>`};
+const TECH=[['Frontend','React, Vite, Tailwind CSS','Single-page app with 14 views','Port to React components'],['Data store','PostgreSQL, object storage','Browser storage, 9 fictional variants','Schema for product, market, language, packaging, label element'],['Reference library','FDA, EU MDR, ISO 15223-1, IMDRF, UDI pages','Seven references listed','Index a curated subset, each rule cites its source'],['Drafting','An LLM API with retrieval over the data store','Deterministic substitution','Grounded drafting with citations and human edit'],['Document reading','pdf.js, Tesseract OCR','Not connected','Extract text from label PDFs'],['Artwork comparison','OpenCV or pixel diff, barcode decoder','Simulated stub (R7)','Region diff and barcode decode'],['Validation','Deterministic rules engine','Rules R1–R6 live','Market rule packs reviewed by Regulatory Affairs'],['Workflow and audit','State machine, append-only log','Local state','Backend with roles and e-signature']];
+const PHASES=[['Now','Round 1 prototype','Interactive demo on fictional data. Rules R1–R6 live. One-slide pitch links here.'],['Next','Build phase','React app and API. PostgreSQL store. Real PDF text extraction. LLM drafting grounded in the store. Role-based login.'],['Then','Integrate','PLM and ERP connectors. OCR, image diff and barcode decode. Translation memory checks. Market rule packs.'],['Later','Scale','Regulatory watch mapped to variants. Predictive risk score per label. Agent roles per engine with human sign-off kept.']];
+P.road=()=>`<div class="stack"><p class="eyebrow">Feasibility and roadmap</p><h2>Built from parts that already exist</h2><p class="sub">No new AI model is needed. The plan combines common tools, public references, controlled sample data and a scoped prototype.</p></div>
+<div class="c">${tbl(['Layer','Existing technology','In this prototype','Next step'],TECH.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`))}</div>
+<div class="stack"><h3>Phases</h3><div class="g2" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">${PHASES.map(p=>`<div class="c stack"><span class="eyebrow">${p[0]}</span><h3>${p[1]}</h3><p>${p[2]}</p></div>`).join('')}</div></div>
+<div class="g2"><div class="c stack"><h3>How we will measure</h3><p>Measured on a labelled test set, never claimed in advance.</p><ul><li>Seeded-error detection: errors caught divided by errors seeded.</li><li>Affected-label identification: recall and precision against known ground truth.</li><li>Review time per change: baseline against assisted, same test set.</li><li>Traceability completeness: findings with a rule and a source, divided by all findings.</li></ul><div><button class="btn ghost sm" data-a="nav" data-v="ana">See the first three on the sample set</button></div></div>
+<div class="c stack"><h3>Risks and how we handle them</h3><ul><li>Rules are not regulatory certification. Every rule names its source, and Regulatory Affairs owns the rule library.</li><li>LLM drafts can be wrong. Drafts use controlled data only, carry citations, and need human approval.</li><li>Translations need linguists. The system flags inconsistencies and never approves a translation.</li><li>Poor source data. The store validates required fields on entry and flags gaps.</li></ul></div></div>`;
+
+const opts=(a,sel)=>a.map(m=>`<option ${sel==m?'selected':''}>${m}</option>`).join('');
+const getD=()=>R=='appr'?S.drafts[S.rv]:S.drafts[S.cur];
+P.dash=()=>{const st={};S.labels.forEach(l=>st[l.st]=(st[l.st]||0)+1);const F=allF(),stg=[['Change entered',!!S.ch],['Impact found',!!S.ch],['Drafts prepared',D().length>0],['Validated',D().some(d=>d.fi)],['Decision recorded',D().some(d=>d.st=='Approved'||d.dec.length||(d.st=='In review'&&blk(d).length))]];
+return`<div class="stack"><h2>Control center</h2><p class="sub">Demo dataset with fictional products. Four errors are seeded on purpose so the checks have something to find.</p></div>
+<div class="grid">${[['Products',new Set(S.labels.map(l=>l.pid)).size],['Label variants',S.labels.length],['Pending reviews',D().filter(d=>d.st=='In review').length],['Open findings',F.length],['Critical / High',F.filter(x=>x.f.sev=='Critical'||x.f.sev=='High').length]].map(([a,b])=>`<div class="c kpi"><span class="k">${a}</span><b>${b}</b></div>`).join('')}</div>
+<div class="c stack"><h3>Scenario progress</h3><div class="lin">${stg.map(s=>`<div class="${s[1]?'done':''}"><small>${s[1]?'Done':'Waiting'}</small>${s[0]}</div>`).join('')}</div><div class="row"><button class="btn" data-a="auto">Run autopilot</button><button class="btn ghost" data-a="nav" data-v="impact">New change request</button><button class="btn ghost" data-a="nav" data-v="val">Open validation</button></div></div>
+<div class="g2"><div class="c stack"><h3>Seeded errors to look for</h3>${SEEDED.map(s=>`<div>${S.det[s[0]]?bd('grn','Caught'):bd('','Not run yet')} ${E(s[1])}</div>`).join('')}</div><div class="c"><h3>Label lifecycle status</h3>${bars(st)}</div></div>
+<div class="c stack"><h3>Recent activity</h3>${S.audit.slice(0,6).map(a=>`<div><span class="k">${a.t} · ${E(a.who)}</span><br>${E(a.ev)}</div>`).join('')}</div>`};
+P.lib=()=>{const r=S.labels.filter(l=>(!S.q||(l.id+l.pid+PR[l.pid]).toLowerCase().includes(S.q.toLowerCase()))&&(!S.mkf||l.mkt==S.mkf)&&(!S.stf||l.st==S.stf));
+return`<div class="stack"><h2>Products & labels</h2><p class="sub">Click a row for the label preview and version history.</p></div><div class="c grid"><input data-f="q" placeholder="Search ID or product" value="${E(S.q)}"><select data-f="mkf"><option value="">All markets</option>${opts(['US','EU','JP'],S.mkf)}</select><select data-f="stf"><option value="">All statuses</option>${opts(['Released','Under review','Retired'],S.stf)}</select></div>
+<div class="c">${tbl(['Label','Product','Ver','Market','Lang','Packaging','Status','Modified','Reviewer'],r.map(l=>`<tr data-a="lab" data-v="${l.id}"><td class="m">${l.id}</td><td>${l.pid}<br><span class="k">${PR[l.pid]}</span></td><td>${l.ver}</td><td>${l.mkt}</td><td>${l.lang}</td><td>${l.pack}</td><td>${bd(l.st=='Released'?'grn':'amb',l.st)}</td><td>${l.mod}</td><td>${l.rev}</td></tr>`))}</div>`};
+P.impact=()=>{const c=S.ch,r=match(),fm=S.form||c||DEF,um=unmatched();
+return`<div class="stack"><h2>Smart change impact analysis</h2><p class="sub">Deterministic text matching over sample label records. A match is a lead for a reviewer, not regulatory certainty.</p></div>
+<div class="c stack"><label class="f" style="margin:0">Describe the change in plain words (rule-based parser now, LLM later)<input id="nl" placeholder="Change the storage temperature of MD-101 from 2–8°C to 2–10°C"></label><div class="row"><button class="btn ghost sm" data-a="parse">Fill the form from this sentence</button><span class="k">Or load a preset:</span>${PRE.map((p,i)=>`<button class="btn ghost sm" data-a="preset" data-v="${i}">${p[0]}</button>`).join('')}</div></div>
+<form id="cf" class="c g2"><div><label class="f">Product<select name="pid">${Object.keys(PR).map(p=>`<option ${fm.pid==p?'selected':''}>${p}</option>`).join('')}</select></label><label class="f">Change category<select name="cat">${opts(['Product specification','Regulatory requirement'],fm.cat)}</select></label><label class="f">Field being changed<select name="field">${Object.entries(FLD).map(([k,v])=>`<option value="${k}" ${fm.field==k?'selected':''}>${v}</option>`).join('')}</select></label><label class="f">Existing value<input name="old" value="${E(fm.old)}"></label><label class="f">Proposed value<input name="nw" value="${E(fm.nw)}"></label></div>
+<div><label class="f">Reason for change<textarea name="reason" rows="3">${E(fm.reason||'')}</textarea></label><label class="f">Source / reference<input name="src" value="${E(fm.src||'')}"></label><label class="f"><input type="checkbox" name="ack"> I acknowledge this change must be authorized before any production use.</label><div id="err" style="color:var(--crit);min-height:18px"></div><button class="btn">Run impact analysis</button></div></form>
+${c?`<div class="c stack"><h3>Results for ${c.pid}: “${E(c.old)}” → “${E(c.nw)}”</h3><p>${r.filter(x=>x.m=='Exact').length} exact and ${r.filter(x=>x.m=='Possible').length} possible matches among ${S.labels.filter(l=>l.pid==c.pid).length} ${c.pid} labels. Review every flagged label.</p>${tbl(['','Label','Market / lang','Packaging','Ver','Match','Why matched','Next action'],r.map(({l,m,why})=>`<tr><td><input type="checkbox" data-a="sel" data-v="${l.id}" ${S.sel.includes(l.id)?'checked':''}></td><td><a href="#" data-a="openl" data-v="${l.id}">${l.id}</a></td><td>${l.mkt} / ${l.lang}</td><td>${l.pack}</td><td>${l.ver}</td><td>${bd(m=='Exact'?'grn':'amb',m+' match')}</td><td>${E(why)}</td><td>${l.st=='Retired'?'Retired variant: confirm no stock remains':m=='Exact'?'Draft revision':'Linguist review and draft'}</td></tr>`))}
+${um.length?`<div class="al">Not flagged for ${c.pid}: ${um.map(l=>`<span class="m">${l.id}</span>`).join(', ')}. Text matching cannot link variants whose wording differs by language. A human should confirm these are unaffected.</div>`:''}
+<div><button class="btn" data-a="mkdrafts">Create drafts for selected</button></div></div>`:''}`};
+P.studio=()=>{const d=S.drafts[S.cur];if(!d)return`<div class="stack"><h2>AI-assisted label studio</h2></div><div class="c">Select an affected label in <a href="#" data-a="nav" data-v="impact">Change impact</a> first, or run the autopilot.</div>`;const l=L(d.id),x=d.x,c=S.ch;
+const rows=[['Storage','storage'],['Warning','warn'],['UDI','udi'],['Manufacturer','mfr'],['REF','ref']].filter(([n,k])=>d.o[k]!==x[k]).map(([n,k])=>`<tr><td>${n}</td><td>${wdiff(d.o[k],x[k])||'(empty)'}</td></tr>`);
+return`<div class="stack"><h2>Label studio · ${d.id}</h2><p class="sub">${l.pid} · ${l.mkt}/${l.lang} · ${l.pack} · Approved v${d.base} → draft v${bump(d.base)} ${bd('amb','UNAPPROVED DRAFT')} ${bd('',d.st)}</p></div>
+<div class="row"><label class="f" style="margin:0;min-width:240px">Draft<select data-f="cur">${D().map(q=>`<option ${q.id==S.cur?'selected':''}>${q.id}</option>`).join('')}</select></label></div>
+<div class="al">Draft text comes from deterministic substitution. AI drafting is <b>simulated</b>. It is not compliant until qualified humans review it. Source: ${E(d.src)}</div>
+<div class="g2"><div class="c stack"><h3>Existing (approved v${d.base})</h3>${specimen(d.o,d.id)}</div><div class="c stack"><h3>Proposed (redlined)</h3>${specimen(x,d.id,{from:d.o,tag:bd('amb','DRAFT')})}</div></div>
+<div class="c stack"><h3>Edit the proposed text</h3><div class="g3">${[['storage','Storage'],['warn','Warning'],['udi','UDI'],['mfr','Manufacturer'],['ref','REF'],['sym','Symbols (comma-separated)']].map(([k,n])=>`<label class="f" style="margin:0">${n}<input data-f="dr:${k}" value="${E(k=='sym'?x.sym.join(','):x[k])}"></label>`).join('')}</div></div>
+<div class="c stack"><h3>Redline</h3>${tbl(['Field','Old → new'],rows)}</div>
+<div class="c stack"><h3>Required-field checklist</h3><div>${[['mfr','Manufacturer'],['warn','Warning'],['udi','UDI'],['storage','Storage']].map(([k,n])=>bd(x[k].trim()?'grn':'red',(x[k].trim()?'✓ ':'✗ ')+n)).join('')}</div><div class="row"><button class="btn ghost" data-a="save">Save draft</button><button class="btn" data-a="validate">Run validation</button><button class="btn ghost" data-a="fix">Apply assisted fixes</button><button class="btn" data-a="submit">Submit for review</button>${d.fi?`<span>${d.fi.length} findings · ${blk(d).length} blocking</span>`:''}</div><p class="note">Assisted fixes fill the manufacturer, correct REF and add missing symbols. Translations are never auto-fixed. They need a linguist.</p></div>`};
+P.val=()=>{const F=allF().filter(x=>(!S.fs||x.f.sev==S.fs)&&(!S.fc||x.f.cat==S.fc)),sevc={Critical:0,High:0,Medium:0,Low:0};allF().forEach(x=>sevc[x.f.sev]++);const d0=D()[0];
+const art=d0?`<div class="c stack"><h3>Artwork comparison ${bd('amb','SIMULATED')}</h3><p class="sub">Mock of what computer-vision comparison would show for ${d0.id}. No image analysis runs. Planned: perceptual diff for layout and a barcode decoder for UDI regions.</p><div class="g2">${['Approved artwork','Revised artwork'].map((t,i)=>`<div><div class="k">${t}</div><svg class="art" viewBox="0 0 300 150" role="img" aria-label="${t}"><rect class="bg" x="1" y="1" width="298" height="148" rx="3"/><rect class="ln" x="14" y="14" width="120" height="8"/>${i?'<rect class="chg" x="12" y="34" width="150" height="16" rx="2"/><text x="18" y="46">Store at 2–10°C</text>':'<text x="18" y="46">Store at 2–8°C</text>'}<rect class="ln" x="14" y="62" width="200" height="6"/><rect class="ln" x="14" y="76" width="170" height="6"/><rect class="same" x="14" y="100" width="140" height="34"/><text x="22" y="120">barcode region</text></svg></div>`).join('')}</div><p class="note">Amber: text change detected. Green dashed: region unchanged.</p></div>`:'';
+return`<div class="stack"><h2>Compliance & artwork validation</h2><p class="sub">Rules R1–R6 run for real on the sample data. R7 artwork is simulated. This is not an FDA or EU MDR validation.</p></div>
+<div class="row">${Object.entries(sevc).map(([k,v])=>`<span class="bd ${k}">${k} ${v}</span>`).join('')}</div>
+<div class="c grid"><select data-f="fs"><option value="">All severities</option>${opts(['Critical','High','Medium','Low'],S.fs)}</select><select data-f="fc"><option value="">All categories</option>${opts([...new Set(allF().map(x=>x.f.cat))],S.fc)}</select><button class="btn" data-a="valall">Validate all drafts</button></div>
+<div class="c">${allF().length?tbl(['Severity','Label','Category','Finding','Rule'],F.map(({d,f,i})=>`<tr data-a="fin" data-v="${d.id}|${i}"><td>${bd(f.sev,f.sev)}</td><td class="m">${d.id}</td><td>${f.cat}</td><td>${E(f.t)}</td><td>${E(f.rule)}</td></tr>`)):'No findings yet. Create drafts, then run validation, or run the autopilot.'}</div>${art}`};
+P.appr=()=>{const d=S.drafts[S.rv],b=d?blk(d):[];
+return`<div class="stack"><h2>Review & approval</h2><p class="sub">Prototype approval only. It is not a real regulatory or production authorization.</p></div><div class="c">${tbl(['Draft','Stage','Validation','Outstanding','Owner','Priority'],D().map(q=>`<tr data-a="rv" data-v="${q.id}"><td class="m">${q.id}</td><td>${bd(q.st=='Approved'?'grn':'',q.st)} ${q.st=='In review'&&blk(q).length?bd('red','On hold'):''}</td><td>${q.fi?'Run':'Not run'}</td><td>${q.fi?blk(q).length+' blocking':'—'}</td><td>You (demo)</td><td>${blk(q).length?'High':'Normal'}</td></tr>`))}</div>
+${d?`<div class="c stack"><div class="row"><h3>${d.id}</h3>${bd('',d.st)} ${rel(d)}</div>${b.length?`<div class="al bad"><b>Release on hold.</b> ${b.length} unresolved Critical or High finding${b.length>1?'s':''}: ${b.map(f=>E(f.t)).join('; ')}. <button class="btn ghost sm" data-a="tostudio" data-v="${d.id}">Fix in label studio</button></div>`:d.st=='Approved'?'<div class="al ok">Approved in the demo and released as a new version.</div>':''}
+<div class="g2">${specimen(d.x,d.id,{from:d.o})}<div class="stack"><div><b>Change:</b> ${E(S.ch.old)} → ${E(S.ch.nw)} (${FLD[S.ch.field]})</div><div><b>Reason:</b> ${E(S.ch.reason)}</div><div><b>Evidence:</b> ${E(S.ch.src)}</div><div><b>Findings:</b> ${(d.fi||[]).map(f=>bd(f.sev,f.sev+': '+f.t)).join('')||'none run'}</div></div></div>
+<div class="row"><button class="btn" data-a="approve">Approve demo revision</button><button class="btn danger" data-a="reject">Reject…</button><button class="btn ghost" data-a="chg">Request changes</button><button class="btn ghost" data-a="cmt">Add comment</button></div>
+<h3>Decisions & comments</h3>${[...d.dec,...d.cm].map(x=>`<div>${E(x)}</div>`).join('')||'None yet'}</div>`:''}`};
+P.trace=()=>{const c=S.ch,d=S.drafts[S.rv]||S.drafts[S.cur],F=S.audit.filter(a=>!S.af||(a.ev+a.ref+a.who).toLowerCase().includes(S.af.toLowerCase()));
+const lin=d&&c?[['Change',`${c.old} → ${c.nw}`,true],['Source',c.src,true],['Label',`${d.id} v${d.base}`,true],['Draft',d.st,true],['Findings',d.fi?`${d.fi.length} (${blk(d).length} blocking)`:'not run',!!d.fi],['Decision',d.st=='Approved'?'Approved':d.st=='Rejected'?'Rejected':blk(d).length&&d.fi?'On hold':'Pending',d.st=='Approved'],['New version',d.st=='Approved'?'v'+L(d.id).ver:'—',d.st=='Approved']]:null;
+const prov=d?['storage','warn','udi','mfr','ref'].map(k=>[FLD[k]||k.toUpperCase(),d.x[k],k==c.field?`Change request ${c.src}`:d.o[k]!==d.x[k]?'Assisted fix, pending review':`Approved label v${d.base}`]):[];
+return`<div class="stack"><h2>Traceability & audit</h2><p class="sub">Change → source → label → draft → findings → decision → version → release.</p></div>
+${lin?`<div class="c stack"><h3>Lineage for ${d.id}</h3><div class="lin">${lin.map(s=>`<div class="${s[2]?'done':''} ${s[1]=='On hold'?'stop':''}"><small>${s[0]}</small>${E(s[1])}</div>`).join('')}</div><h3>Where each label element comes from</h3>${tbl(['Element','Value','Origin'],prov.map(p=>`<tr><td>${p[0]}</td><td class="m">${E(p[1])||'(empty)'}</td><td>${E(p[2])}</td></tr>`))}</div>`:'<div class="c">No draft yet. Run the autopilot or create drafts in Change impact.</div>'}
+<div class="c stack"><input data-f="af" placeholder="Filter audit log" value="${E(S.af)}">${tbl(['Time','Actor','Event','Ref'],F.map(a=>`<tr><td class="m">${a.t}</td><td>${E(a.who)}</td><td>${E(a.ev)}</td><td class="m">${E(a.ref)}</td></tr>`))}</div>`};
+const ASSUME=[['Identify affected labels',90,2],['Draft revisions',120,10],['Compare & redline',150,5],['Repetitive checks',120,3],['Route approvals',60,10]];
+function csvText(){const rows=[['label','severity','category','finding','rule','source'],...allF().map(({d,f})=>[d.id,f.sev,f.cat,f.t,f.rule,f.src])];return rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n')}
+P.ana=()=>{const F=allF(),sv={Critical:0,High:0,Medium:0,Low:0};F.forEach(x=>sv[x.f.sev]++);const sum=i=>ASSUME.reduce((s,a)=>s+a[i],0),got=SEEDED.filter(s=>S.det[s[0]]).length,m=match(),tr=F.length?F.filter(x=>x.f.rule&&x.f.src).length:0;
+const im=S.imp||{ex:0,ps:0,tot:0},aff=isDef()?`${im.tot} of 7 found (${im.ex} exact, ${im.ps} possible). Precision ${im.tot}/${im.tot}`:S.ch?'Ground truth is defined only for the default scenario':'Run a change first';
+return`<div class="stack"><h2>Analytics & impact</h2><p class="sub">Metrics below are computed on the sample set. Timing figures are assumptions until measured.</p></div>
+<div class="c stack"><h3>Measured on the seeded test set</h3>${tbl(['Metric','Definition','Result'],[['Seeded errors caught','Errors found by rules or normalisation, out of 4 seeded',`<b>${got} of ${SEEDED.length}</b>${got?'':' (run the autopilot)'}`],['Affected labels identified','Flagged variants against known ground truth (all 7 MD-101 variants contain the old value)',aff],['Traceability completeness','Findings with a rule and a source, divided by all findings',F.length?`<b>${tr} of ${F.length}</b>`:'No findings yet'],['Audit events recorded','Entries in the ledger',`<b>${S.audit.length}</b>`]])}</div>
+<div class="g2"><div class="c"><h3>Findings by severity</h3>${bars(sv)}</div><div class="c stack"><h3>Seeded errors</h3>${SEEDED.map(s=>`<div>${S.det[s[0]]?bd('grn','Caught by '+s[2]):bd('','Not run')} ${E(s[1])}</div>`).join('')}</div></div>
+<div class="c stack"><h3>Before and after (ASSUMED minutes per change)</h3>${tbl(['Step','Manual (assumed)','Assisted (assumed)'],ASSUME.map(a=>`<tr><td>${a[0]}</td><td class="num">${a[1]}</td><td class="num">${a[2]}</td></tr>`))}<b>Total: ${sum(1)} vs ${sum(2)} min</b><p class="note">Hypothetical. To be replaced with measured baselines from the test set.</p><div><button class="btn ghost" data-a="csv">Export findings as CSV</button></div></div>`};
+const REFS=[['FDA: General Device Labeling Requirements','https://www.fda.gov/medical-devices/device-labeling/general-device-labeling-requirements'],['EU MDR: Regulation (EU) 2017/745','https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A02017R0745-20230320'],['ISO 20417:2026','https://www.iso.org/standard/88714.html'],['ISO 15223-1: Symbols','https://www.iso.org/standard/77326.html'],['IMDRF: Principles of Labelling','https://www.imdrf.org/documents/principles-labelling-medical-devices-and-ivd-medical-devices'],['European Commission: UDI','https://health.ec.europa.eu/medical-devices-topics-interest/unique-device-identifier-udi_en'],['FDA: UDI Form and Content','https://www.fda.gov/regulatory-information/search-fda-guidance-documents/unique-device-identification-system-form-and-content-unique-device-identifier-udi']];
+P.src=()=>`<div class="stack"><h2>Sources & methodology</h2><p class="sub">Listing a reference does not mean this prototype implements or validates that document.</p></div><div class="c stack"><h3>References from the case study</h3>${REFS.map(([n,u])=>`<div><a href="${u}" target="_blank" rel="noopener">${n}</a></div>`).join('')}</div>
+<div class="g2"><div class="c stack"><h3>Genuinely implemented</h3><p>Impact matching with normalisation, draft substitution, word-level redline, rules R1–R6, assisted fixes, workflow states, release gate, audit log, lineage, local persistence.</p></div><div class="c stack"><h3>Simulated</h3><p>AI drafting, OCR, computer-vision artwork comparison (R7), regulatory monitoring, all timing figures.</p></div><div class="c stack"><h3>Limits</h3><p>Fictional data. Demo rules are not regulatory requirements. No PLM or ERP link. Text matching cannot link variants whose wording differs by language, so unmatched variants are listed for a human.</p></div><div class="c stack"><h3>Needs qualified review</h3><p>Every regulatory interpretation, translation, symbol, UDI and release decision. AI proposes and checks. Authorized humans approve.</p></div></div>`;
+
+const TOUR=[
+{r:'story',t:'The idea in one page',b:()=>'LabelGuard AI starts from a product or regulatory change and carries it through impact analysis, revision, validation and approval. The pitch pages explain the idea. The Live demo pages run on fictional sample data.'},
+{r:'nov',t:'What is new',b:()=>'AI label writers and rule checkers already exist, and the case study lists them. What we add is the connection: impact before revision, evidence on every finding, and a release gate that holds while critical findings remain.'},
+{r:'arch',t:'How the modules connect',b:()=>'Sources feed one data store. Four engines pass work in order and every step writes to the audit ledger. Select any block to see whether it is built, simulated or roadmap.',enter:()=>setTimeout(playFlow,150)},
+{r:'cov',t:'Coverage of the case study',b:()=>{const all=[...PS_PAIN,...PS_APP],c=k=>all.filter(r=>r[2]==k).length;return`All 10 required points and all 10 suggested approaches are mapped: ${c('built')} built, ${c('part')} partly built, ${c('sim')} simulated, ${c('road')} roadmap.`}},
+{r:'dash',t:'Starting state of the demo',b:()=>'Two fictional products and nine label variants across US, EU and JP. Four errors are seeded: a missing manufacturer on the German carton, a wrong REF on the French carton, a missing symbol on the Japanese carton, and a “2-8 °C” format variant on the EU pouch.',enter:()=>{S=seed()}},
+{r:'impact',t:'A change arrives',b:()=>{const c=cnt(),u=unmatched().length;return`Storage range for MD-101 changes from 2–8°C to 2–10°C. The engine finds ${c.ex} exact and ${c.ps} possible matches. The French label is only possible because its wording differs, and the table says why. ${u?u+' variant(s) were not flagged and are listed for a human check.':''}`},enter:()=>{if(!isDef())setChange(DEF)}},
+{r:'studio',t:'Drafts and redlines',b:()=>`Drafts exist for every flagged, non-retired label, each marked unapproved. The redline shows the exact words that changed. Switch drafts with the selector.`,enter:()=>{stageDrafts()}},
+{r:'val',t:'Checks with evidence',b:()=>{const c=cnt();return`${c.F} findings across ${D().length} drafts, ${c.bl} blocking. Select any row to see the rule, the location and the recommended action. Artwork comparison below is simulated and labelled so.`},enter:()=>{stageValidate()}},
+{r:'appr',t:'The release gate',b:()=>{const c=cnt();return`${c.ap} drafts had no Critical or High findings and were approved as new versions. ${c.held} stay on hold, such as the German and French cartons. Try “Approve demo revision” on a held draft. The gate refuses.`},enter:()=>{stageDecide()}},
+{r:'trace',t:'Traceability',b:()=>'The lineage runs from change and source to label, draft, findings, decision and new version. The table shows where each label element comes from.'},
+{r:'ana',t:'Measured on a seeded test set',b:()=>{const g=SEEDED.filter(s=>S.det[s[0]]).length;return`${g} of ${SEEDED.length} seeded errors were caught, and affected labels are compared with known ground truth. Timing figures are labelled as assumptions until measured.`}},
+{r:'road',t:'Feasibility and roadmap',b:()=>'Every layer uses existing tools. The table shows what exists in the prototype and what comes next, with phases and how we will measure results.'},
+{r:'src',t:'What is real, what is simulated',b:()=>'Rules, matching, redlines, the gate and the ledger are real. AI drafting, artwork comparison and regulatory monitoring are simulated or roadmap. Tour finished. Explore any page.'}];
+function tourRender(){const el=$('#tour');document.body.classList.toggle('tour-on',T.on);if(!T.on){el.innerHTML='';return}const s=TOUR[T.i];
+el.innerHTML=`<div class="tc"><div class="dots">${TOUR.map((x,i)=>`<i class="${i<=T.i?'d':''}"></i>`).join('')}</div><div class="eyebrow">Guided tour · ${T.i+1} of ${TOUR.length}</div><h3>${E(s.t)}</h3><p>${E(s.b())}</p><div class="row"><button class="btn ghost sm" data-a="tprev" ${T.i?'':'disabled'}>Back</button><button class="btn sm" data-a="tnext">${T.i==TOUR.length-1?'Finish':'Next'}</button><span style="flex:1"></span><button class="btn ghost sm" data-a="texit">Exit tour</button></div></div>`}
+function tourGo(i){T.i=Math.max(0,Math.min(TOUR.length-1,i));const s=TOUR[T.i];if(s.enter)s.enter();sv();go(s.r)}
+function startTour(){S=seed();A.sel='e1';T={on:true,i:0};tourGo(0)}
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function apHtml(){const st=ap.steps;return`<div class="mb ap"><div class="eyebrow">Autopilot</div><h3>Running one change end to end</h3><ul>${st.map((s,i)=>`<li><span class="st ${i<ap.i?'ok':i==ap.i&&!ap.done?'run':''}"></span><div><b>${E(s[0])}</b><br><span class="k">${i<ap.i||ap.done?E(ap.res[i]||''):E(s[1])}</span></div></li>`).join('')}</ul>${ap.done?`<div class="row"><button class="btn sm" data-a="apgo" data-v="impact">See impact</button><button class="btn sm" data-a="apgo" data-v="val">See findings</button><button class="btn sm" data-a="apgo" data-v="appr">See approvals</button><button class="btn ghost sm" data-a="apgo" data-v="trace">See audit trail</button></div>`:''}<div class="row"><button class="btn ghost sm" data-a="close">${ap.done?'Close':'Cancel'}</button></div></div>`}
+async function autopilot(){S=seed();T.on=false;tourRender();
+const steps=[['Change request received','MD-101 storage 2–8°C → 2–10°C (ECO-2026-0147)',()=>{setChange(DEF);return'Change record created with reason and source.'}],
+['Impact analysis','Matching the old value across all MD-101 variants',()=>{const c=cnt();return`${c.ex} exact and ${c.ps} possible matches. ${unmatched().length} variants not flagged.`}],
+['Drafts prepared','Substituting the new value and building redlines',()=>{stageDrafts();return`${D().length} unapproved drafts created.`}],
+['Validation','Running rules R1–R7 on every draft',()=>{stageValidate();const c=cnt();return`${c.F} findings, ${c.bl} Critical or High.`}],
+['Release gate','Holding drafts with blocking findings',()=>{stageDecide();const c=cnt();return`${c.ap} approved as new versions, ${c.held} held for a human fix.`}],
+['Audit trail','Recording every event',()=>`${S.audit.length} events in the ledger.`]];
+ap={steps,i:0,res:[],done:false,cancel:false};$('#m').innerHTML=`<div class="ov" data-a="ovx">${apHtml()}</div>`;
+for(let i=0;i<steps.length;i++){if(!ap||ap.cancel)return;ap.i=i;$('#m').innerHTML=`<div class="ov" data-a="ovx">${apHtml()}</div>`;await wait(750);if(!ap||ap.cancel)return;ap.res[i]=steps[i][2]()}
+ap.i=steps.length;ap.done=true;sv();$('#m').innerHTML=`<div class="ov" data-a="ovx">${apHtml()}</div>`}
+function render(){clearInterval(flowTimer);if(!P[R])R='story';const y=window.scrollY,changed=lastR!==R;lastR=R;
+const g=NAV.map(([n,items])=>`<div class="grp">${n}</div>${items.map(([k,t])=>`<button class="nl ${k==R?'on':''}" data-a="nav" data-v="${k}">${t}</button>`).join('')}`).join('');
+$('#app').innerHTML=`<nav class="side"><div class="brand">LabelGuard AI</div><div class="tag">Change-driven. Evidence-backed. Human-approved.</div>${g}</nav><main><header class="top"><b>${E(TITLES[R]||'')}</b><span class="demo">DEMO · fictional data</span><span class="sp"></span><button class="btn sm" data-a="tour">Guided tour</button><button class="btn ghost sm" data-a="auto">Autopilot</button><button class="btn ghost sm" data-a="theme">Theme</button><button class="btn ghost sm" data-a="reset">Reset demo data</button></header><div class="pg">${P[R]()}</div></main>`;
+tourRender();window.scrollTo(0,changed?0:y)}
+function go(r){R=r;try{location.hash=r}catch(e){}sv();render()}
+function modal(h){$('#m').innerHTML=`<div class="ov" data-a="ovx"><div class="mb">${h}<div class="row"><button class="btn ghost sm" data-a="close">Close</button></div></div></div>`}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('show'),2800)}
+let askCb=null;function ask(title,label,cb){askCb=cb;$('#m').innerHTML=`<div class="ov" data-a="ovx"><div class="mb"><h3>${E(title)}</h3><label class="f">${E(label)}<textarea id="askt" rows="3"></textarea></label><div class="row"><button class="btn sm" data-a="askok">Save</button><button class="btn ghost sm" data-a="close">Cancel</button></div></div></div>`;setTimeout(()=>{const t=$('#askt');t&&t.focus()},30)}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-a]');if(!t)return;if(t.tagName=='A')e.preventDefault();const a=t.dataset.a,v=t.dataset.v;
+if(a=='ovx'){if(e.target===t&&!(ap&&!ap.done)){$('#m').innerHTML=''}return}
+const d=getD();
+if(a=='nav'){$('#m').innerHTML='';go(v)}
+else if(a=='close'){if(ap&&!ap.done)ap.cancel=true;ap=null;$('#m').innerHTML=''}
+else if(a=='apgo'){ap=null;$('#m').innerHTML='';go(v)}
+else if(a=='tour')startTour();
+else if(a=='tnext'){if(T.i==TOUR.length-1){T.on=false;tourRender()}else tourGo(T.i+1)}
+else if(a=='tprev')tourGo(T.i-1);
+else if(a=='texit'){T.on=false;tourRender()}
+else if(a=='auto')autopilot();
+else if(a=='theme'){const r=document.documentElement,dk=r.dataset.theme?r.dataset.theme=='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.dataset.theme=dk?'light':'dark';try{localStorage.setItem('lg-theme',r.dataset.theme)}catch(x){}}
+else if(a=='reset'){if(t.dataset.arm){S=seed();T.on=false;A.sel='e1';t.dataset.arm='';go('dash');toast('Demo data reset')}else{t.dataset.arm='1';t.textContent='Click again to confirm';clearTimeout(rstT);rstT=setTimeout(()=>{t.dataset.arm='';t.textContent='Reset demo data'},3000)}}
+else if(a=='node'){A.sel=v;document.querySelectorAll('[data-node]').forEach(n=>n.classList.toggle('sel',n.dataset.node==v));$('#nodeDetail').innerHTML=archDetail(v)}
+else if(a=='flow')playFlow();
+else if(a=='lab'){const l=L(v);modal(`<h3>${l.id} · ${PR[l.pid]}</h3>${specimen(l,l.id)}<p>Version history: ${[...l.h.map(h=>`v${h.ver} (${h.note})`),`v${l.ver} (current)`].join(' → ')}</p><p>Sibling variants of ${l.pid}: ${S.labels.filter(x=>x.pid==l.pid).length}</p>`)}
+else if(a=='sel'){S.sel=t.checked?[...S.sel,v]:S.sel.filter(x=>x!=v);sv()}
+else if(a=='preset'){S.form={...PRE[+v][1]};render()}
+else if(a=='parse'){const r=parseNL(($('#nl')||{}).value||'');if(!r)return toast('Use the pattern “… from X to Y”.');S.form={...(S.form||DEF),...(r.pid&&PR[r.pid]?{pid:r.pid}:{}),field:r.field,old:r.old,nw:r.nw};render();toast('Form filled. Review it, then run the analysis.')}
+else if(a=='mkdrafts'){if(!S.sel.length)return toast('Select at least one label.');S.sel.forEach(mkDraft);S.cur=S.sel[0];go('studio')}
+else if(a=='openl'){mkDraft(v);S.cur=v;go('studio')}
+else if(a=='save'){au('Draft saved',S.cur);sv();toast('Draft saved locally.')}
+else if(a=='validate'){runVal(d);go('studio')}
+else if(a=='valall'){if(!D().length)return toast('Create drafts first.');D().forEach(runVal);go('val')}
+else if(a=='fix'){const n=fixes(d);sv();render();toast(n?n+' assisted fix(es) applied. Re-run validation.':'Nothing to fix automatically.')}
+else if(a=='submit'){if(!d.fi)return toast('Run validation first.');d.st='In review';S.rv=d.id;au('Submitted for review',d.id);go('appr')}
+else if(a=='fin'){const[i,k]=v.split('|'),f=S.drafts[i].fi[k];modal(`<h3>${bd(f.sev,f.sev)} ${E(f.t)}</h3><p><b>Detected:</b> ${E(f.det)}</p><p><b>Rule:</b> ${E(f.rule)}</p><p><b>Source location:</b> ${E(f.src)}</p><p><b>Recommended action:</b> ${E(f.act)}</p><p><b>Human review:</b> ${E(f.h)}</p>`)}
+else if(a=='rv'){S.rv=v;sv();render()}
+else if(a=='tostudio'){S.cur=v;go('studio')}
+else if(a=='approve'){if(!d)return;if(d.st=='Approved')return toast('Already approved.');if(d.st!='In review')return toast('Submit the draft for review first.');if(!d.fi)return toast('Re-run validation first.');const b=blk(d);if(b.length){au(`Approval refused: ${b.length} unresolved Critical/High findings`,d.id,'Release gate');sv();render();return toast(`Blocked: ${b.length} unresolved Critical or High finding(s).`)}approveDraft(d);go('appr');toast('Approved in the demo. New version released.')}
+else if(a=='reject')ask('Reject this revision','Reason for rejection (required)',r=>{d.st='Rejected';d.dec.push(now()+' Rejected: '+r+' (v'+d.base+' stays current)');au('Rejected: '+r,d.id,'Reviewer (demo)')});
+else if(a=='chg')ask('Request changes','What needs to change?',r=>{d.st='Changes requested';d.dec.push(now()+' Changes requested: '+r);au('Changes requested: '+r,d.id,'Reviewer (demo)')});
+else if(a=='cmt')ask('Add comment','Comment',r=>{d.cm.push(now()+' Comment: '+r);au('Reviewer comment added',d.id,'Reviewer (demo)')});
+else if(a=='askok'){const r=($('#askt').value||'').trim();if(!r)return toast('Please enter some text.');const f=askCb;askCb=null;$('#m').innerHTML='';f(r);sv();go('appr')}
+else if(a=='csv'){modal(`<h3>Findings CSV</h3><textarea id="csvt" rows="9" readonly class="m">${E(csvText())}</textarea><div class="row"><button class="btn sm" data-a="copy" data-v="csvt">Copy to clipboard</button></div>`)}
+else if(a=='copy'){const el=$('#'+v);el.select();let p;try{p=navigator.clipboard.writeText(el.value)}catch(x){p=Promise.reject()}p.then(()=>toast('Copied.')).catch(()=>toast('Press Ctrl+C to copy the selected text.'))}});
+document.addEventListener('keydown',e=>{if((e.key=='Enter'||e.key==' ')&&e.target.matches&&e.target.matches('g[data-a]')){e.preventDefault();e.target.dispatchEvent(new MouseEvent('click',{bubbles:true}))}});
+document.addEventListener('input',e=>{const f=e.target.form;if(f&&f.id=='cf'&&e.target.name){S.form=S.form||{};S.form[e.target.name]=e.target.value}});
+document.addEventListener('change',e=>{const f=e.target.dataset.f;if(!f)return;const v=e.target.value;if(f.startsWith('dr:')){const k=f.slice(3),d=S.drafts[S.cur];d.x[k]=k=='sym'?v.split(',').map(s=>s.trim()).filter(Boolean):v;d.fi=null;sv();render()}else{S[f]=v;sv();render()}});
+document.addEventListener('submit',e=>{if(e.target.id!='cf')return;e.preventDefault();const f=Object.fromEntries(new FormData(e.target)),er=m=>$('#err').textContent=m;
+if(!f.old.trim()||!f.nw.trim()||!f.reason.trim()||!f.src.trim())return er('All fields are required.');if(norm(f.old)==norm(f.nw))return er('Proposed value must differ from existing value.');if(!f.ack)return er('Please acknowledge the authorization requirement.');
+setChange({pid:f.pid,cat:f.cat,field:f.field,old:f.old.trim(),nw:f.nw.trim(),reason:f.reason,src:f.src});sv();render()});
+addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(P[h]&&h!=R){R=h;render()}});
+try{const th=localStorage.getItem('lg-theme');if(th)document.documentElement.dataset.theme=th}catch(e){}
+try{const h=location.hash.slice(1);if(P[h])R=h}catch(e){}
+render();
+
+</script>
+
+</body></html>
